@@ -25,6 +25,9 @@ describe('seal', function() {
     
     
     describe('encrypting arbitrary claims', function() {
+      
+      this.timeout(10000);
+      
       var token;
       before(function(done) {
         seal({ foo: 'bar' }, function(err, t) {
