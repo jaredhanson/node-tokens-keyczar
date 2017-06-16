@@ -23,7 +23,8 @@
   ],
   "main": "./lib",
   "dependencies": {
-    "keyczarjs": "^0.1.0"
+    "keyczarjs": "^0.1.0",
+    "node-forge": "^0.7.1"
   },
   "devDependencies": {
     "make-node": "^0.3.0",
