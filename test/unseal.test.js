@@ -14,7 +14,7 @@ describe('unseal', function() {
       before(function() {
         keying = sinon.spy(function(q, cb){
           if (q.usage == 'decrypt') {
-            return cb(null, [ { secret: 'abcdef7890abcdef' } ]);
+            return cb(null, [ { secret: 'abcdef7890abcdef', algorithm: 'aes128-cbc' } ]);
           } else {
             return cb(null, [ { secret: 'abcdef7890abcdefef7890abcdef7890' } ]);
           }
