@@ -13,7 +13,11 @@ describe('unseal', function() {
     describe('unsealing', function() {
       before(function() {
         keying = sinon.spy(function(q, cb){
-          return cb(null, [ { secret: 'abcdef7890abcdef' } ]);
+          if (q.usage == 'decrypt') {
+            return cb(null, [ { secret: 'abcdef7890abcdef' } ]);
+          } else {
+            return cb(null, [ { secret: 'abcdef7890abcdefef7890abcdef7890' } ]);
+          }
         });
       
         unseal = setup(keying);
@@ -21,7 +25,7 @@ describe('unseal', function() {
       
       var tkn;
       before(function(done) {
-        var token = 'AIMIqG3eiQz7bQvB0gZ6HYoUtu7QnUOJJkxf-EniaWyMYvucFgM6jFfZ73WsWtR-ikLC8k7bLLFT';
+        var token = 'AFbSEQIlizeCtojN2JaSd1VgXSBApWdXLZ8Bb4-ArOvs6wN-SazhUJFFUX4YQxUsM-m-ZMVM72bo';
         
         unseal(token, function(err, t) {
           tkn = t;
@@ -34,11 +38,17 @@ describe('unseal', function() {
       });
       
       it('should query for key', function() {
-        expect(keying.callCount).to.equal(1);
+        expect(keying.callCount).to.equal(2);
         var call = keying.getCall(0);
         expect(call.args[0]).to.deep.equal({
           usage: 'decrypt',
-          algorithms: [ 'aes256-cbc' ],
+          algorithms: [ 'aes128-cbc' ],
+        });
+        
+        call = keying.getCall(1);
+        expect(call.args[0]).to.deep.equal({
+          usage: 'verify',
+          algorithms: [ 'hmac-sha256' ],
         });
       });
       
