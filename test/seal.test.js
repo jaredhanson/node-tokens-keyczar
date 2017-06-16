@@ -14,7 +14,7 @@ describe('seal', function() {
       keying = sinon.spy(function(q, cb){
         if (q.recipient) {
           var recipient = q.recipient;
-          return cb(null, [ { secret: recipient.secret } ]);
+          return cb(null, [ { secret: recipient.secret, algorithm: 'aes128-cbc' } ]);
         }
         
         return cb(null, [ { id: 'k1', secret: 'abcdef7890abcdef' } ]);
@@ -24,7 +24,7 @@ describe('seal', function() {
     });
     
     
-    describe('encrypting arbitrary claims', function() {
+    describe('encrypting to self', function() {
       
       this.timeout(10000);
       
@@ -93,7 +93,7 @@ describe('seal', function() {
           expect(claims.foo).to.equal('bar');
         });
       });
-    }); // encrypting arbitrary claims
+    }); // encrypting to self
     
   });
   
