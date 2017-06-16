@@ -107,7 +107,7 @@ describe('seal', function() {
       });
     }); // encrypting to self
     
-    describe.skip('encrypting to audience with 2048-bit RSA', function() {
+    describe('encrypting to audience with 2048-bit RSA', function() {
       this.timeout(10000);
       
       var token;
@@ -131,14 +131,18 @@ describe('seal', function() {
         var call = keying.getCall(0);
         expect(call.args[0]).to.deep.equal({
           usage: 'encrypt',
-          recipient: undefined,
+          recipient: {
+            id: 'https://api.example.com/rsa-2048'
+          },
           algorithms: [ 'aes128-cbc' ]
         });
         
         call = keying.getCall(1);
         expect(call.args[0]).to.deep.equal({
           usage: 'sign',
-          recipient: undefined,
+          recipient: {
+            id: 'https://api.example.com/rsa-2048'
+          },
           algorithms: [ 'hmac-sha256' ]
         });
       });
@@ -148,7 +152,8 @@ describe('seal', function() {
         expect(token.substr(0, 1)).to.equal('A');
       });
       
-      describe('verifying claims', function() {
+      
+      describe.skip('verifying claims', function() {
         var claims;
         before(function() {
           var szkeyset = JSON.stringify({
