@@ -2,6 +2,7 @@ var keyczar = require('keyczarjs');
 var keyczar_util = require('keyczarjs/keyczar_util');
 var setup = require('../lib/seal');
 var fs = require('fs');
+var forge = require('node-forge');
 var sinon = require('sinon');
 var expect = require('chai').expect;
 
@@ -153,14 +154,17 @@ describe('seal', function() {
       });
       
       
-      describe.skip('verifying claims', function() {
+      describe('verifying claims', function() {
         var claims;
         before(function() {
+          var data = fs.readFileSync(__dirname + '/keys/rsa-2048/private-key.pem');
+          var key = forge.pki.privateKeyFromPem(data);
+          
           var szkeyset = JSON.stringify({
             meta: JSON.stringify({
               name: '',
               purpose: keyczar.PURPOSE_DECRYPT_ENCRYPT,
-              type: keyczar.TYPE_AES,
+              type: keyczar.TYPE_RSA_PRIVATE,
               encrypted: false,
               versions: [{
                 exportable: false,
@@ -168,15 +172,7 @@ describe('seal', function() {
                 versionNumber: 1
               }]
             }),
-            '1': JSON.stringify({
-              mode: 'CBC',
-              aesKeyString: keyczar_util.encodeBase64Url('abcdef7890abcdef'),
-              size: 128,
-              hmacKey: {
-                hmacKeyString: keyczar_util.encodeBase64Url('abcdef7890abcdefef7890abcdef7890'),
-                size: 256
-              }
-            })
+            '1': keyczar_util._rsaPrivateKeyToKeyczarJson(key)
           });
           
           var keyset = keyczar.fromJson(szkeyset);
