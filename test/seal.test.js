@@ -12,12 +12,13 @@ describe('seal', function() {
     
     before(function() {
       keying = sinon.spy(function(q, cb){
-        if (q.recipient) {
-          var recipient = q.recipient;
-          return cb(null, [ { secret: recipient.secret, algorithm: 'aes128-cbc' } ]);
+        if (!q.recipient) {
+          if (q.usage == 'encrypt') {
+            return cb(null, [ { secret: 'abcdef7890abcdef' } ]);
+          } else {
+            return cb(null, [ { secret: 'abcdef7890abcdefef7890abcdef7890' } ]);
+          }
         }
-        
-        return cb(null, [ { id: 'k1', secret: 'abcdef7890abcdef' } ]);
       });
       
       seal = setup(keying);
@@ -25,7 +26,6 @@ describe('seal', function() {
     
     
     describe('encrypting to self', function() {
-      
       this.timeout(10000);
       
       var token;
@@ -41,13 +41,19 @@ describe('seal', function() {
       });
       
       it('should query for key', function() {
-        expect(keying.callCount).to.equal(1);
+        expect(keying.callCount).to.equal(2);
         var call = keying.getCall(0);
         expect(call.args[0]).to.deep.equal({
-          recipient: undefined,
           usage: 'encrypt',
-          algorithms: [ 'aes256-cbc' ],
-          length: 16
+          recipient: undefined,
+          algorithms: [ 'aes128-cbc' ]
+        });
+        
+        call = keying.getCall(1);
+        expect(call.args[0]).to.deep.equal({
+          usage: 'sign',
+          recipient: undefined,
+          algorithms: [ 'hmac-sha256' ]
         });
       });
       
@@ -76,7 +82,7 @@ describe('seal', function() {
               aesKeyString: keyczar_util.encodeBase64Url('abcdef7890abcdef'),
               size: 128,
               hmacKey: {
-                hmacKeyString: keyczar_util.encodeBase64Url('abcdef7890abcdef' + 'abcdef7890abcdef'),
+                hmacKeyString: keyczar_util.encodeBase64Url('abcdef7890abcdefef7890abcdef7890'),
                 size: 256
               }
             })
