@@ -10,7 +10,7 @@ describe('unseal', function() {
   describe('using defaults', function() {
     var unseal, keying;
     
-    describe('unsealing', function() {
+    describe('decrypting', function() {
       before(function() {
         keying = sinon.spy(function(q, cb){
           if (q.usage == 'decrypt') {
@@ -64,8 +64,8 @@ describe('unseal', function() {
           }
         });
       });
-    }); // unsealing
+    }); // decrypting
     
   }); // using defaults
   
-});
+}); // unseal

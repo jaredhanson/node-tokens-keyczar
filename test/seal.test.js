@@ -153,7 +153,6 @@ describe('seal', function() {
         expect(token.substr(0, 1)).to.equal('A');
       });
       
-      
       describe('verifying claims', function() {
         var claims;
         before(function() {
@@ -188,6 +187,6 @@ describe('seal', function() {
       });
     }); // encrypting to audience with 2048-bit RSA
     
-  });
+  }); // using defaults
   
-});
+}); // seal
